@@ -1,0 +1,77 @@
+.container{
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.row{
+  display: grid;
+  grid-gap: var(--margin);
+  grid-template-columns: repeat(var(--total-cols), 1fr);
+}
+
+.row-s{
+  display: grid;
+  grid-template-columns: repeat(var(--total-cols), 1fr);
+}
+
+.row-m{
+  display: grid;
+  grid-gap: calc(var(--margin)/3);
+  grid-template-columns: repeat(var(--total-cols), 1fr);
+}
+
+.col{
+  --init: auto;
+  --cols: var(--total-cols);
+  grid-column: var(--init)/span var(--cols);
+}
+
+@each $label, $value in $breakpoints {
+  @media screen and (min-width: $value) {
+    body{
+      --size: "#{$label}";
+    }
+
+    .hide-#{$label}{
+      display: none;
+    }
+
+    .show-#{$label}{
+      display: auto;
+    }
+
+    @for $i from 1 through $total-cols {
+      .#{$label}-#{$i}{
+        --cols: #{$i};
+      }
+
+      .init-#{$label}-#{$i}{
+        --init: #{$i};
+      }
+    }
+  }
+}
+
+.show-grid{
+  position: fixed;
+  z-index: 9999999999999999999;
+  right: 20px;
+  bottom: 20px;
+  padding: 10px;
+  background: #00000091;
+  border-radius: 5px;
+  color: white;
+}
+
+.show-grid::after{
+  content: var(--size);
+}
+
+.mb{
+  margin-bottom: $margin;
+}
+
+.mt{
+  margin-top: $margin;
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Ayuda</title>
+  <link rel="stylesheet" href="styles.min.css">
+</head>
+<body>
+  <header class="header primary">
+    <h1 class="header__title">Ayuda</h1>
+  </header>
+  <main class="help container row">
+    <div class="col xs-24">
+      <div class="card secondary">
+        A continuación se brindará una breve explicación sobre el proceso que se debe seguir para poder guardar o bien crear un nuevo horario. Para garantizar un correcto resultado se recomienda al usuario seguir al pie de la letra las siguientes indicaciones.
+      </div>
+    </div>
+    <div class="col xs-24">
+      <div class="card secondary">
+        <h2 class="help__title">1) Ingresa el nombre del curso que quieras almacenar.</h2>
+        <img class="help__img" src="img/ayuda/01.png">
+      </div>
+    </div>
+    <div class="col xs-24">
+      <div class="card secondary">
+        <h2 class="help__title">2) Selecciona el día que se impartirá dicho curso.</h2>
+        <img class="help__img" src="img/ayuda/02.png">
+      </div>
+    </div>
+    <div class="col xs-24">
+      <div class="card secondary">
+        <h2 class="help__title">3) Selecciona una hora de inicio y de fin del curso.</h2>
+        <img class="help__img" src="img/ayuda/03.png">
+      </div>
+    </div>
+    <div class="col xs-24">
+      <div class="card secondary">
+        <h2 class="help__title">4) Da click en el botón "Agregar".</h2>
+        <img class="help__img" src="img/ayuda/04.png">
+      </div>
+    </div>
+    <div class="col xs-24">
+      <div class="card secondary">
+        <h2 class="help__title">5) Repite el proceso las veces que sean necesarias.</h2>
+        <img class="help__img" src="img/ayuda/05.png">
+      </div>
+    </div>
+    <div class="col xs-24">
+      <div class="card secondary">
+        <h2 class="help__title">6) Cuando tu horario esté listo para guardarse, selecciona la opción del menú "Guardar como..."y puedes elegir entre alguna de las siguientes opciones:</h2>
+        <!-- <ul>
+          <li>Link</li>
+          <li>Imagen</li>
+          <li>PDF</li>
+          <li>Hoja de cálculo (ODS)</li>
+          <li>Hoja de cálculo (XLSX)</li>
+          <li>Imprimir</li>
+        </ul> -->
+        <img class="help__img hide" src="img/ayuda/06.png" id="yul-off">
+        <img class="help__img hide" src="img/ayuda/06.1.png" id="yul-on">
+      </div>
+    </div>
+  </main>
+  <script type="text/javascript">
+    let yul = val => {
+      let el, ex
+      if(val){
+        el = document.getElementById('yul-on')
+        ex = document.getElementById('yul-off')
+      }else{
+        el = document.getElementById('yul-off')
+        ex = document.getElementById('yul-on')
+      }
+      ex.classList.add('hide')
+      el.classList.remove('hide')
+    }
+
+    window.addEventListener('storage', function (e) {
+      if(e.key == 'yul'){
+        yul(e.newValue == 'true')
+      }
+
+      if(e.key == 'dark'){
+        if(e.newValue == 'true'){
+          document.body.classList.add('dark-theme')
+        }else{
+          document.body.classList.remove('dark-theme')
+        }
+      }
+    })
+
+    yul(localStorage.yul == 'true')
+
+    if(localStorage.dark == 'true'){
+      document.body.classList.add('dark-theme')
+    }else{
+      document.body.classList.remove('dark-theme')
+    }
+  </script>
+</body>
+</html>

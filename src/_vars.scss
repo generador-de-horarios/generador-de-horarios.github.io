@@ -1,0 +1,43 @@
+$total-cols: 24;
+$margin: 15px;
+$padding: 10px;
+$breakpoints: (
+  "xs": 0px,
+  "sm": 760px,
+  "md": 800px,
+  "lg": 1000px,
+  "xl": 1200px
+);
+
+$colors:(
+  "primary": #2b9cce,
+  "secondary": white,
+  "cta": #c00,
+  "grey": #666,
+  "ligth-grey": #EBEBEB,
+  "dark": darken(grey, 80%)
+);
+
+$dark-colors:(
+  "primary": #1d3763,
+  "secondary": #4a4a4a,
+  "cta": #900,
+  "grey": #d2d2d2,
+  "ligth-grey": #383838
+);
+
+:root{
+  --total-cols: #{$total-cols};
+  --margin: #{$margin};
+  --padding: #{$padding};
+  @each $name, $value in $colors {
+    --#{$name}: #{$value};
+  }
+  --outline: 1px dashed var(--grey);
+}
+
+@media screen and (max-width: map-get($breakpoints, 'sm')){
+  :root{
+    --padding: 5px;
+  }
+}

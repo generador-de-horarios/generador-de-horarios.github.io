@@ -1,0 +1,131 @@
+.nav{
+  background: var(--color);
+  color: var(--grey);
+  line-height: 45px;
+  font-size: 0.8125em;
+}
+
+.nav .fa{
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.nav .fa-indicator{
+  margin-right: 0;
+  margin-left: 10px;
+  font-size: 9px;
+  position: relative;
+  top: -1px;
+}
+
+.nav__item{
+  display: inline-block;
+  border-style: solid;
+  border-color: rgba(0,0,0,.1);
+  border-right-width: 1px;
+  float: left;
+  padding: 3px;
+}
+
+.nav__item:hover>.nav__btn,
+.nav__item:focus-within>.nav__btn, {
+  color: white;
+  background: var(--color);
+  transition: background 0.4s,color 0.4s;
+}
+
+.nav__btn{
+  padding: 0 10px;
+  line-height: inherit;
+  width: 100%;
+  text-align: left;
+  font-size: inherit;
+
+  &:disabled{
+    background: lightgray !important;
+    color: darkgray !important;
+    cursor: not-allowed;
+  }
+}
+
+.nav__submenu{
+  margin-top: 10px;
+  min-width: 200px;
+  position: absolute;
+  background: var(--secondary);
+  margin-left: -3px;
+  transform-origin: top;
+  transform: perspective(400px) rotateX(-90deg);
+  top: 100%;
+  z-index: 1;
+}
+
+.nav :hover>.nav__submenu,
+.nav :focus-within>.nav__submenu{
+  top: auto;
+  transform: rotateX(0deg);
+  transition: transform .4s;
+}
+
+.nav__submenu::before{
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 24px;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid var(--secondary);
+  border-left: 5px solid transparent;
+}
+
+.nav__submenu::after{
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+}
+
+.nav__submenu .fa-indicator {
+  top: 0;
+  float: right;
+  display: block;
+  line-height: inherit;
+}
+
+.nav__submenu .nav__item{
+  border-style: solid;
+  border-color: rgba(0,0,0,.1);
+  border-right-width: 0;
+  border-bottom-width: 1px;
+  display: block;
+  float: none;
+}
+
+.nav__submenu .nav__item:last-child{
+  border: none;
+}
+
+@media screen and (max-width: map-get($breakpoints, 'sm')){
+  .nav__item{
+    width: 100%;
+    border-bottom-width: 1px;
+    border-right-width: 0px;
+  }
+
+  .nav__submenu{
+    margin-left: var(--margin);
+    width: 80%;
+  }
+
+  .nav__list{
+    height: 0px;
+    overflow: hidden;
+    transition: .4s;
+  }
+
+  .menu-open{
+    height: 100vh;
+  }
+}

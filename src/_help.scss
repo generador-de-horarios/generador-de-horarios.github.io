@@ -1,0 +1,16 @@
+.help{
+  color: var(--grey);
+  margin-top: var(--margin);
+  margin-bottom: var(--margin);
+  text-align: center;
+}
+
+.help__title{
+  font-weight: bold;
+  margin-top: var(--margin);
+  margin-bottom: var(--margin);
+}
+
+.help__img{
+  max-width: 100%;
+}

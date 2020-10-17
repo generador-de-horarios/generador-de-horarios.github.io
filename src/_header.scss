@@ -1,0 +1,17 @@
+.header{
+  background: var(--color);
+  color: white;
+  line-height: 63px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.header__title{
+  font-size: 2em;
+}
+
+@media screen and (max-width: map-get($breakpoints, 'sm')) {
+  .header__title{
+    font-size: 1.5em;
+  }
+}

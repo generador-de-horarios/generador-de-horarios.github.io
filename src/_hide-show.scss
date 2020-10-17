@@ -1,0 +1,26 @@
+.hide-show{
+  font-size: .8125em;
+}
+
+.hide-show::before{
+  content: "\f070";
+  font: normal normal normal 14px/1 FontAwesome;
+}
+
+.hide-show__input:checked ~ .hide-show::before{
+  content: "\f06e";
+}
+
+.posible-hiden{
+  transition: transform .3s;
+}
+
+.hide-show__input{
+  // position: absolute;
+  // opacity: 0;
+  display: none;
+}
+
+.hide-show__input:checked + .posible-hiden{
+  display: none;
+}

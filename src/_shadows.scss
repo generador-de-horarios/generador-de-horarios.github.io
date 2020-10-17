@@ -1,0 +1,5 @@
+@for $i from 1 through 5{
+  .deep-#{$i}{
+    box-shadow: 0 0 #{$i}0px rgba(0,0,0,.3);
+  }
+}

@@ -1,0 +1,37 @@
+.btn{
+  color: var(--grey);
+  line-height: 20px;
+  border: 3px solid var(--secondary);
+  background: var(--secondary);
+  box-shadow: 0 0 20px rgba(0,0,0,.3);
+  transition: background .5s,color .5s;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  padding: calc(var(--padding)/2) var(--padding);
+}
+
+.btn__100{
+  width: 100%;
+}
+
+.btn:focus{
+  outline: var(--outline);
+}
+
+.btn:hover, .btn:focus{
+  background: var(--color);
+  color: white;
+}
+
+.btn.custom{
+  margin-top: 36px;
+  line-height: 34px;
+  padding: 0;
+}
+
+@media screen and (max-width: map-get($breakpoints, 'sm')){
+  .btn.custom{
+    margin-top: var(--padding);
+  }
+}

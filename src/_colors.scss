@@ -1,0 +1,40 @@
+@each $name, $value in $colors{
+  .#{$name}{
+    --color: var(--#{$name});
+  }
+
+  .text-#{$name}{
+    --text-color: var(--#{$name});
+  }
+
+  .text-#{$name}-f{
+    color: var(--#{$name});
+  }
+
+  .bg-#{$name}{
+    background: var(--#{$name});
+  }
+}
+
+
+.text-white{
+  --text-color: white;
+}
+
+.dark-theme{
+  @each $name, $value in $dark-colors {
+    --#{$name}: #{$value};
+  }
+
+  & .dark-theme__text-white{
+    color: white;
+  }
+
+  & .dark-theme__black{
+    background: black;
+  }
+
+  & .dark-theme__text-dark{
+    color: var(--ligth-grey);
+  }
+}

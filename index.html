@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Generador de horarios</title>
+  <meta name="theme-color" content="#EBEBEB">
+  <meta property="og:title" content="Generador de horarios"/>
+  <meta name="robots" content="noodp">
+  <link rel="icon" sizes="32x32" type="image/png" href="icon.png" />
+  <meta charset="utf-8">
+  <meta name="description" content="Este es el generador de horarios creado y utilizado por los estudiantes de la UCR.">
+  <meta property="og:image" content="https://horarios.coldideas.com/img/f4.jpg">
+  <meta property="og:site_name" content="Generador de horarios">
+  <meta property="og:image:width" content="470"/>
+  <meta property="og:type" content="website">
+  <meta name="google-site-verification" content="izjqmiQ_mjHS0SaatMrSfKJ-bgS9IkND4Ec2C-xzFl0"/>
+  <link rel="stylesheet" href="css/main.css" async>
+</head>
+<body>
+  <div id="app">
+    <modal :open="modals.error" @close="modals.error = false" class="hide">
+      <div class="card cta text-white" style="text-align: center;">
+        <h1 class="modal__title"><i class="fa fa-warning"></i> ¡Ha habido un problema!</h1>
+        <ul>
+          <li v-for="error in errorsToShow" style="margin: var(--margin)">{{error}}</li>
+        </ul>
+        <img :src="'/img/gifs/'+errorModalImg">
+      </div>
+    </modal>
+    <modal :open="modals.colab" @close="modals.colab = false" class="hide">
+      <div class="card primary text-white m-b">
+        <h1 class="modal__title"><i class="fa fa-users"></i> Colaboradores</h1>
+        <div class="card secondary text-grey">
+          <h2 class="modal__title">Diego Piedra araya</h2>
+          <p class="modal__text">
+            Dueño y principal desarrollador el sitio.
+            <br>
+            Estudiante avanzado de la carrera de Informátima Empresarial de la UCR.
+          </p>
+          <p class="modal__text">
+            Contacto:
+            <br>
+            <i class="fa fa-envelope" aria-hidden="true"></i> <a href="mail:developer.diegopiedra@gmail.com" class="text-primary-f dark-theme__text-white">developer.diegopiedra@gmail.com</a>
+          </p>
+        </div>
+        <div class="card secondary text-grey m-t">
+          <h2 class="modal__title">Yulieth Avila Salazar</h2>
+          <p class="modal__text">
+            Social media manager.
+            <br>
+            Estudiante de la carrera de Estudia Diseño Gráfico de la UCR.
+          </p>
+          <p class="modal__text">
+            Contacto:
+            <br>
+            <i class="fa fa-facebook-official" aria-hidden="true"></i> <a href="https://www.facebook.com/yuliavilaart" target="_blank" class="text-primary-f dark-theme__text-white">Yulieth Ávila - Diseño, Ilustración y Fotografía</a>
+          </p>
+        </div>
+        <div class="card secondary text-grey m-t">
+          <h2 class="modal__title">Randall Sibaja Rodriguez</h2>
+          <p class="modal__text">
+            Desarrollador colaborador de la versión 1 del sitio.
+            <br>
+            Trabajador actual de AKTEK S.A, graduado de la carrera de Informátima Empresarial de la UCR.
+          </p>
+        </div>
+      </div>
+    </modal>
+    <modal :open="modals.dev" @close="modals.dev = false" class="hide">
+      <div class="card primary text-white m-b row">
+        <div class="col xs-24">
+          <h1 class="modal__title"><i class="fa fa-code"></i> Librerías de desarrollo</h1>
+        </div>
+        <div class="card secondary text-grey col xs-24">
+          <p class="modal__text m-b">
+            A continuación se hace una atribución pública como agradecimiento a las librerías que han sido utilizadas para la creación de este proyecto.
+          </p>
+        </div>
+        <div class="card secondary text-grey col xs-24 md-12" style="text-align: center" v-for="lib in libs">
+          <h2 class="modal__title">{{lib.name}}</h2>
+          <p class="modal__text">{{lib.desc}}</p>
+          <a :href="lib.link" target="_blank" class="text-primary-f">{{lib.link}}</a>
+        </div>
+      </div>
+    </modal>
+    <modal :open="modals.help" @close="modals.help = false" class="hide">
+      <div class="card secondary text-grey">
+        <v-iframe src="ayuda.html" allowfullscreen  style="width:100%; height:80vh;"></v-iframe>
+      </div>
+    </modal>
+    <modal :open="modals.newSchedule" @close="modals.newSchedule = false" class="hide">
+      <div class="card primary text-white">
+        <h1 class="modal__title">Importante</h1>
+        <p class="modal__text">
+          Como se ha implementado una característica que permite conservar los datos de un horario si se recarga la página, al crear un horario nuevo vas a perder los datos del horario actual.
+          <br>
+          Se recomienda dar cancelar a este mensaje, seleccionar primero una opción del menú "Guardar como ..." y una vez gurdado este horario proceder a crear el nuevo.
+        </p>
+        <button @click="$emit('closeModals')" class="btn primary">Cancelar</button>
+        <button @click="createNewSchedule(true)" class="btn cta">Perder horario actual</button>
+      </div>
+    </modal>
+    <modal :open="modals.terms" @close="modals.terms = false" class="hide">
+      <div class="card secondary m-b text-grey">
+        <p class="modal__text">
+          <div class="highlight">
+            <p>T&Eacute;RMINOS DE SERVICIO</p>
+            <p>----</p>
+            <p>INFORMACI&Oacute;N GENERAL</p>
+            <p>Este sitio web es operado por Diego Piedra Araya. En todo el sitio, los t&eacute;rminos &ldquo;nosotros&rdquo;, &ldquo;nos&rdquo;, &ldquo;nuestro&rdquo; y "Generador de Horarios" se refieren a Diego Piedra Araya. Generador de horarios ofrece este sitio web, incluyendo toda la informaci&oacute;n, herramientas y servicios disponibles para ti en este sitio, el usuario, est&aacute; condicionado a la aceptaci&oacute;n de todos los t&eacute;rminos, condiciones, pol&iacute;ticas y notificaciones aqu&iacute; establecidos.</p>
+            <p>Al visitar nuestro sitio participas en nuestro &ldquo;Servicio&rdquo; y aceptas los siguientes t&eacute;rminos y condiciones (&ldquo;T&eacute;rminos de Servicio&rdquo;, &ldquo;T&eacute;rminos&rdquo;), incluidos todos los t&eacute;rminos y condiciones adicionales y las pol&iacute;ticas a las que se hace referencia en el presente documento y/o disponible a trav&eacute;s de hiperv&iacute;nculos. Estas Condiciones de Servicio se aplican a todos los usuarios del sitio, incluyendo si limitaci&oacute;n a usuarios que sean navegadores, proveedores, clientes, comerciantes, y/o colaboradores de contenido.</p>
+            <p>Por favor, lee estos T&eacute;rminos de Servicio cuidadosamente antes de acceder o utilizar nuestro sitio web. Al acceder o utilizar cualquier parte del sitio, est&aacute;s aceptando los T&eacute;rminos de Servicio. Si no est&aacute;s de acuerdo con todos los t&eacute;rminos y condiciones de este acuerdo, entonces no deber&iacute;as acceder a la p&aacute;gina web o usar cualquiera de los servicios. Si las T&eacute;rminos de Servicio son considerados una oferta, la aceptaci&oacute;n est&aacute; expresamente limitada a estos T&eacute;rminos de Servicio.</p>
+            <p><br />Cualquier funci&oacute;n nueva o herramienta que se a&ntilde;adan a la servicio actual, tambi&eacute;n estar&aacute;n sujetas a los T&eacute;rminos de Servicio. Puedes revisar la versi&oacute;n actualizada de los T&eacute;rminos de Servicio, en cualquier momento en esta p&aacute;gina. Nos reservamos el derecho de actualizar, cambiar o reemplazar cualquier parte de los T&eacute;rminos de Servicio mediante la publicaci&oacute;n de actualizaciones y/o cambios en nuestro sitio web. Es tu responsabilidad chequear esta p&aacute;gina peri&oacute;dicamente para verificar cambios. Tu uso continuo o el acceso al sitio web despu&eacute;s de la publicaci&oacute;n de cualquier cambio constituye la aceptaci&oacute;n de dichos cambios.</p>
+            <p><br />SECCI&Oacute;N 1 - T&Eacute;RMINOS DEL SITIO WEB</p>
+            <p>Al utilizar este sitio, declaras que tienes al menos la mayor&iacute;a de edad en tu estado o provincia de residencia, o que tienes la mayor&iacute;a de edad en tu estado o provincia de residencia y que nos has dado tu consentimiento para permitir que cualquiera de tus dependientes menores use este sitio.</p>
+            <p>No puedes usar nuestros productos con ning&uacute;n prop&oacute;sito ilegal o no autorizado tampoco puedes, en el uso del Servicio, violar cualquier ley en tu jurisdicci&oacute;n (incluyendo pero no limitado a las leyes de derecho de autor).</p>
+            <p>No debes transmitir gusanos, virus o cualquier c&oacute;digo de naturaleza destructiva.</p>
+            <p>El incumplimiento o violaci&oacute;n de cualquiera de estos T&eacute;rminos dar&aacute;n lugar al cese inmediato de tus Servicios.</p>
+            <p><br />SECCI&Oacute;N 2 - CONDICIONES GENERALES</p>
+            <p>Nos reservamos el derecho de rechazar la prestaci&oacute;n de servicio a cualquier persona, por cualquier motivo y en cualquier momento.</p>
+            <p>Entiendes que tu contenido (sin incluir la informaci&oacute;n de tu tarjeta de cr&eacute;dito), puede ser transferida sin encriptar e involucrar (a) transmisiones a trav&eacute;s de varias redes; y (b) cambios para ajustarse o adaptarse a los requisitos t&eacute;cnicos de conexi&oacute;n de redes o dispositivos. La informaci&oacute;n de tarjetas de cr&eacute;dito est&aacute; siempre encriptada durante la transferencia a trav&eacute;s de las redes.</p>
+            <p>Est&aacute;s de acuerdo con no reproducir, duplicar, copiar, vender, revender o explotar cualquier parte del Servicio, usp del Servicio, o acceso al Servicio o cualquier contacto en el sitio web a trav&eacute;s del cual se presta el servicio, sin el expreso permiso por escrito de nuestra parte.</p>
+            <p>Los t&iacute;tulos utilizados en este acuerdo se incluyen solo por conveniencia y no limita o afecta a estos T&eacute;rminos.</p>
+            <p><br />SECCI&Oacute;N 3 - EXACTITUD, EXHAUSTVIDAD Y ACTUALIDAD DE LA INFORMACI&Oacute;N</p>
+            <p>No nos hacemos responsables si la informaci&oacute;n disponible en este sitio no es exacta, completa o actual. El material en este sitio es provisto solo para informaci&oacute;n general y no debe confiarse en ella o utilizarse como la &uacute;nica base para la toma de decisiones sin consultar primeramente, informaci&oacute;n m&aacute;s precisa, completa u oportuna. Cualquier dependencia en el materia de este sitio es bajo su propio riesgo.</p>
+            <p>Este sitio puede contener cierta informaci&oacute;n hist&oacute;rica. La informaci&oacute;n hist&oacute;rica, no es necesariamente actual y es provista &uacute;nicamente para tu referencia. Nos reservamos el derecho de modificar los contenidos de este sitio en cualquier momento, pero no tenemos obligaci&oacute;n de actualizar cualquier informaci&oacute;n en nuestro sitio. Aceptas que es tu responsabilidad de monitorear los cambios en nuestro sitio.</p>
+            <p>SECCI&Oacute;N 4 - MODIFICACIONES AL SERVICIO</p>
+            <p>Nos reservamos el derecho de modificar o discontinuar el Servicio (o cualquier parte del contenido) en cualquier momento sin aviso previo.</p>
+            <p>No seremos responsables ante ti o alguna tercera parte por cualquier modificaci&oacute;n, suspensi&oacute;n o discontinuidad del Servicio.</p>
+            <p><br />SECCI&Oacute;N 5 - SERVICIOS (si aplicable)</p>
+            <p>Ciertos servicios pueden estar disponibles exclusivamente en l&iacute;nea a trav&eacute;s del sitio web. Estos servicios pueden tener cantidades limitadas y estar sujetas a devoluci&oacute;n o cambio de acuerdo a nuestra pol&iacute;tica de devoluci&oacute;n solamente.</p>
+            <p>Nos reservamos el derecho, pero no estamos obligados, para limitar las ventas de nuestros servicios a cualquier persona, regi&oacute;n geogr&aacute;fica o jurisdicci&oacute;n. Podemos ejercer este derecho basados en cada caso. Nos reservamos el derecho de limitar las cantidades de servicios que ofrecemos. Todas las descripciones de servicios o precios de los servicios est&aacute;n sujetos a cambios en cualquier momento sin previo aviso, a nuestra sola discreci&oacute;n. Nos reservamos el derecho de discontinuar cualquier servicio en cualquier momento. Cualquier oferta de servicio hecho en este sitio es nulo donde est&eacute; prohibido.</p>
+            <p>No garantizamos que la calidad de los servicios, informaci&oacute;n u otro material comprado u obtenido por ti cumpla con tus expectativas, o que cualquier error en el Servicio ser&aacute; corregido.</p>
+            <p><br />SECCI&Oacute;N 6 - EXACTITUD DE FACTURACI&Oacute;N E INFORMACI&Oacute;N DE CUENTA</p>
+            <p>Nos reservamos el derecho de rechazar cualquier pedido que realice con nosotros. Podemos, a nuestra discreci&oacute;n, limitar o cancelar las cantidades compradas por persona, por hogar o por pedido. Estas restricciones pueden incluir pedidos realizados por o bajo la misma cuenta de cliente, la misma tarjeta de cr&eacute;dito, y/o pedidos que utilizan la misma facturaci&oacute;n y/o direcci&oacute;n de env&iacute;o.</p>
+            <p>En el caso de que hagamos un cambio o cancelemos una orden, podemos intentar notificarte poni&eacute;ndonos en contacto v&iacute;a correo electr&oacute;nico y/o direcci&oacute;n de facturaci&oacute;n / n&uacute;mero de tel&eacute;fono proporcionado en el momento que se hizo pedido. Nos reservamos el derecho de limitar o prohibir las &oacute;rdenes que, a nuestro juicio, parecen ser colocado por los concesionarios, revendedores o distribuidores.</p>
+            <p>Te comprometes a proporcionar informaci&oacute;n actual, completa y precisa de la compra y cuenta utilizada para todas las compras realizadasen nuestra tienda. Te comprometes a ctualizar r&aacute;pidamente tu cuenta y otra informaci&oacute;n, incluyendo tu direcci&oacute;n de correo electr&oacute;nico y n&uacute;meros de tarjetas de cr&eacute;dito y fechas de vencimiento, para que podamos completar tus transacciones y contactarte cuando sea necesario.</p>
+            <p>Para m&aacute;s detalles, por favor revisa nuestra Pol&iacute;tica de Devoluciones.</p>
+            <p>SECCI&Oacute;N 7 - HERRAMIENTAS OPCIONALES</p>
+            <p>Es posible que te proporcionemos aceso a herramientas de terceros a los cuales no monitoreamos y sobre los que no tenemos control ni entrada.</p>
+            <p>Reconoces y aceptas que proporcionamos acceso a este tipo de herramientas "tal cual" y "seg&uacute;n disponibilidad" sin garant&iacute;as, representaciones o condiciones de ning&uacute;n tipo y sin ning&uacute;n respaldo. No tendremos responsabilidad alguna derivada de o relacionada con tu uso de herramientas proporcionadas por terceras partes.</p>
+            <p>Cualquier uso que hagas de las herramientas opcionales que se ofrecen a trav&eacute;s del sitio bajo tu propio riesgo y discreci&oacute;n y debes asegurarte de estar familiarizado y aprobar los t&eacute;rminos bajo los cuales estas herramientas son proporcionadas por el o los proveedores de terceros.</p>
+            <p>Tambien es posible que, en el futuro, te ofrezcamos nuevos servicios y/o caracter&iacute;sticas a trav&eacute;s del sitio web (incluyendo el lanzamiento de nuevas herramientas y recursos). Estas nuevas carater&iacute;sticas y/o servicios tambien estar&aacute;n sujetos a estos T&eacute;rminos de Servicio.</p>
+            <p>SECCI&Oacute;N 8 - ENLACES DE TERCERAS PARTES</p>
+            <p>Cierto contenido, productos y servicios disponibles v&iacute;a nuestro Servicio puede inclu&iacute;r material de terceras partes.</p>
+            <p>Enlaces de terceras partes en este sitio pueden direccionarte a sitios web de terceras partes que no est&aacute;n afiliadas con nosotros. No nos responsabilizamos de examinar o evaluar el contenido o exactitud y no garantizamos ni tendremos ninguna obligaci&oacute;n o responsabilidad por cualquier material de terceros o siitos web, o de cualquier material, productos o servicios de terceros.</p>
+            <p>No nos hacemos responsables de cualquier da&ntilde;o o da&ntilde;os relacionados con la adquisici&oacute;n o utilizaci&oacute;n de bienes, servicios, recursos, contenidos, o cualquier otra transacci&oacute;n realizadas en conexi&oacute;n con sitios web de terceros. Por favor revisa cuidadosamente las pol&iacute;ticas y pr&aacute;cticas de terceros y aseg&uacute;rate de entenderlas antes de participar en cualquier transacci&oacute;n. Quejas, reclamos, inquietudes o pregutas con respecto a productos de terceros deben ser dirigidas a la tercera parte.</p>
+            <p>SECCI&Oacute;N 9 - COMENTARIOS DE USUARIO, CAPTACI&Oacute;N Y OTROS ENV&Iacute;OS</p>
+            <p>Si, a pedido nuestro, env&iacute;as ciertas presentaciones espec&iacute;ficas (por ejemplo la participaci&oacute;n en concursos) o sin un pedido de nuestra parte env&iacute;as ideas creativas, sugerencias, proposiciones, planes, u otros materiales, ya sea en l&iacute;nea, por email, por correo postal, o de otra manera (colectivamente, 'comentarios'), aceptas que podamos, en cualquier momento, sin restricci&oacute;n, editar, copiar, publicar, distribu&iacute;r, traducir o utilizar por cualquier medio comentarios que nos hayas enviado. No tenemos ni tendremos ninguna obligaci&oacute;n (1) de mantener ning&uacute;n comentario confidencialmente; (2) de pagar compensaci&oacute;n por comentarios; o (3) de responder a comentarios.</p>
+            <p>Nosotros podemos, pero no tenemos obligaci&oacute;n de, monitorear, editar o remover contenido que consideremos sea ileg&iacute;timo, ofensivo, amenazante, calumnioso, difamatorio, pornogr&aacute;fico, obsceno u objetable o viole la propiedad intelectual de cualquiera de las partes o los T&eacute;rminos de Servicio.</p>
+            <p>Aceptas que tus comentarios no violar&aacute;n los derechos de terceras partes, incluyendo derechos de autor, marca, privacidad, personalidad u otro derechos personal o de propiedad. Asimismo, aceptas que tus comentarios no contienen material difamatorio o ilegal, abusivo u obsceno, o contienen virus inform&aacute;ticos u otro malware que pudiera, de alguna manera, afectar el funcionamiento del Srvicio o de cualquier sitio web relacionado. No puedes utilizar una direcci&oacute;n de correo electr&oacute;nico falsa, usar otra identidad que no sea leg&iacute;tima, o enga&ntilde;ar a terceras partes o a nosotros en cuanto al origen de tus comentarios. Tu eres el &uacute;nico responsable por los comentarios que haces y su precisi&oacute;n. No nos hacemos responsables y no asumimos ninguna obligaci&oacute;n con respecto a los comentarios publicados por ti o cualquier tercer parte.</p>
+            <p><br />SECCI&Oacute;N 10 - INFORMACI&Oacute;N PERSONAL</p>
+            <p>Tu presentaci&oacute;n de informaci&oacute;n personal a trav&eacute;s del sitio se rige por nuestra Pol&iacute;tica de Privacidad. Para ver nuestra Pol&iacute;tica de Privacidad ve a la secci&oacute;n del sitio web "Informaci&oacute;n &gt; Pol&iacute;tica de Privacidad".</p>
+            <p><br />SECCI&Oacute;N 11 - ERRORES, INEXACTITUDES Y OMISIONES</p>
+            <p>De vez en cuando puede haber informaci&oacute;n en nuestro sitio o en el Servicio que contiene errores tipogr&aacute;ficos, inexactitudes u omisiones que puedan estar relacionadas con las descripciones de productos, precios, promociones, ofertas, gastos de env&iacute;o del producto, el tiempo de tr&aacute;nsito y la disponibilidad. Nos reservamos el derecho de corregir los errores, inexactitudes u omisiones y de cambiar o actualizar la informaci&oacute;n o cancelar pedidos si alguna informaci&oacute;n en el Servicio o en cualquier sitio web relacionado es inexacta en cualquier momento sin previo aviso (incluso despu&eacute;s de que hayas enviado tu orden) .</p>
+            <p>No asumimos ninguna obligaci&oacute;n de actualizar, corregir o aclarar la informaci&oacute;n en el Servicio o en cualquier sitio web relacionado, incluyendo, sin limitaci&oacute;n, la informaci&oacute;n de precios, excepto cuando sea requerido por la ley. Ninguna especificaci&oacute;n actualizada o fecha de actualizaci&oacute;n aplicada en el Servicio o en cualquier sitio web relacionado, debe ser tomada para indicar que toda la informaci&oacute;n en el Servicio o en cualquier sitio web relacionado ha sido modificado o actualizado.</p>
+            <p><br />SECCI&Oacute;N 12 - USOS PROHIBIDOS</p>
+            <p>En adici&oacute;n a otras prohibiciones como se establece en los T&eacute;rminos de Servicio, se prohibe el uso del sitio o su contenido: (a) para ning&uacute;n prop&oacute;sito ilegal; (b) para pedirle a otros que realicen o partiicpen en actos il&iacute;citos; (c) para violar cualquier regulaci&oacute;n, reglas, leyes internacionales, federales, provinciales o estatales, u ordenanzas locales; (d) para infringir o violar el derecho de propiedad intelectual nuestro o de terceras partes; (e) para acosar, abusar, insultar, da&ntilde;ar, difamar, calumniar, desprestigiar, intimidar o discriminar por razones de g&eacute;nero, orientaci&oacute;n sexual, religi&oacute;n, tnia, raza, edad, nacionalidad o discapacidad; (f) para presentar informaci&oacute;n falsa o enga&ntilde;osa; (g) para cargar o transmitir virus o cualquier otro tipo de c&oacute;digo malicioso que sea o pueda ser utilizado en cualquier forma que pueda comprometer la funcionalidad o el funcionamiento del Servicio o de cualquier sitio web relacionado, otros sitios o Internet; (h) para recopilar o rastrear informaci&oacute;n personal de otros; (i) para generar spam, phish, pharm, pretext, spider, crawl, or scrape; (j) para cualquier prop&oacute;sito obsceno o inmoral; o (k) para interferir con o burlar los elementos de seguridad del Servicio o cualquier sitio web relacionado&iquest; otros sitios o Internet. Nos reservamos el derecho de suspender el uso del Servicio o de cualquier sitio web relacionado por violar cualquiera de los &iacute;tems de los usos prohibidos.</p>
+            <p><br />SECCI&Oacute;N 13 - EXCLUSI&Oacute;N DE GARANT&Iacute;AS; LIMITACI&Oacute;N DE RESPONSABILIDAD</p>
+            <p>No garantizamos ni aseguramos que el uso de nuestro servicio ser&aacute; ininterrumpido, puntual, seguro o libre de errores.</p>
+            <p>No garantizamos que los resultados que se puedan obtener del uso del servicio ser&aacute;n exactos o confiables.</p>
+            <p>Aceptas que de vez en cuando podemos quitar el servicio por per&iacute;odos de tiempo indefinidos o cancelar el servicio en cualquier momento sin previo aviso.</p>
+            <p>Aceptas expresamente que el uso de, o la posibilidad de utilizar, el servicio es bajo tu propio riesgo. El servicio y todos los productos y servicios proporcionados a trav&eacute;s del servicio son (salvo lo expresamente manifestado por nosotros) proporcionados "tal cual" y "seg&uacute;n est&eacute; disponible" para su uso, sin ning&uacute;n tipo de representaci&oacute;n, garant&iacute;as o condiciones de ning&uacute;n tipo, ya sea expresa o impl&iacute;cita, incluidas todas las garant&iacute;as o condiciones impl&iacute;citas de comercializaci&oacute;n, calidad comercializable, la aptitud para un prop&oacute;sito particular, durabilidad, t&iacute;tulo y no infracci&oacute;n.</p>
+            <p>En ning&uacute;n caso Generador de horarios, nuestros directores, funcionarios, empleados, afiliados, agentes, contratistas, internos, proveedores, prestadores de servicios o licenciantes ser&aacute;n responsables por cualquier da&ntilde;o, p&eacute;rdida, reclamo, o da&ntilde;os directos, indirectos, incidentales, punitivos, especiales o consecuentes de cualquier tipo, incluyendo, sin limitaci&oacute;n, p&eacute;rdida de beneficios, p&eacute;rdida de igresos, p&eacute;rdida de ahorros, p&eacute;rdida de datos, costos de reemplazo, o cualquier da&ntilde;o similar, ya sea basado en contrato, agravio (incluyendo negligencia), responsabilidad estricta o de otra manera, como consecuencia del uso de cualquiera de los servicios o productos adquiridos mediante el servicio, o por cualquier otro reclamo relacionado de alguna manera con el uso del servicio o cualquier producto, incluyendo pero no limitado, a cualquier error u omisi&oacute;n en cualquier contenido, o cualquier p&eacute;rdida o da&ntilde;o de cualquier tipo incurridos como resultados de la utilizaci&oacute;n del servicio o cualquier contenido (o producto) publicado, transmitido, o que se pongan a disposici&oacute;n a trav&eacute;s del servicio, incluso si se avisa de su posibilidad. Debido a que algunos estados o jurisdicciones no permiten la exclusi&oacute;n o la limitaci&oacute;n de responsabilidad por da&ntilde;os consecuenciales o incidentales, en tales estados o jurisdicciones, nuestra responsabilidad se limitar&aacute; en la medida m&aacute;xima permitida por la ley.</p>
+            <p><br />SECCI&Oacute;N 14 - INDEMNIZACI&Oacute;N</p>
+            <p>Aceptas indemnizar, defender y mantener indemne Generador de horarios y nuestras matrices, subsidiarias, afiliados, socios, funcionarios, directores, agentes, contratistas, concesionarios, proveedores de servicios, subcontratistas, proveedores, internos y empleados, de cualquier reclamo o demanda, incluyendo honorarios razonables de abogados, hechos por cualquier tercero a causa o como resultado de tu incumplimiento de las Condiciones de Servicio o de los documentos que incorporan como referencia, o la violaci&oacute;n de cualquier ley o de los derechos de u tercero.</p>
+            <p>SECCI&Oacute;N 15 - DIVISIBILIDAD</p>
+            <p>En el caso de que se determine que cualquier disposici&oacute;n de estas Condiciones de Servicio sea ilegal, nula o inejecutable, dicha disposici&oacute;n ser&aacute;, no obstante, efectiva a obtener la m&aacute;xima medida permitida por la ley aplicable, y la parte no exigible se considerar&aacute; separada de estos T&eacute;rminos de Servicio, dicha determinaci&oacute;n no afectar&aacute; la validez de aplicabilidad de las dem&aacute;s disposiciones restantes.</p>
+            <p><br />SECCI&Oacute;N 16 - RESCISI&Oacute;N</p>
+            <p>Las obligaciones y responsabilidades de las partes que hayan incurrido con anterioridad a la fecha de terminaci&oacute;n sobrevivir&aacute;n a la terminaci&oacute;n de este acuerdo a todos los efectos.</p>
+            <p>Estas Condiciones de servicio son efectivos a menos que y hasta que sea terminado por ti o nosotros. Puedes terminar estos T&eacute;rminos de Servicio en cualquier momento por avisarnos que ya no deseas utilizar nuestros servicios, o cuando dejes de usar nuestro sitio.</p>
+            <p>Si a nuestro juicio, fallas, o se sospecha que haz fallado, en el cumplimiento de cualquier t&eacute;rmino o disposici&oacute;n de estas Condiciones de Servicio, tambi&eacute;n podemos terminar este acuerdo en cualquier momento sin previo aviso, y seguir&aacute;s siendo responsable de todos los montos adeudados hasta incluida la fecha de terminaci&oacute;n; y/o en consecuencia podemos negarte el acceso a nuestros servicios (o cualquier parte del mismo).</p>
+            <p>SECCI&Oacute;N 17 - ACUERDO COMPLETO</p>
+            <p>Nuestra falla para ejercer o hacer valer cualquier derecho o disposici&oacute;n de estas Condiciones de Servicio no constituir&aacute; una renuncia a tal derecho o disposici&oacute;n.</p>
+            <p>Estas Condiciones del servicio y las pol&iacute;ticas o reglas de operaci&oacute;n publicadas por nosotros en este sitio o con respecto al servicio constituyen el acuerdo completo y el entendimiento entre tu y nosotros y rigen el uso del Servicio y reemplaza cualquier acuerdo, comunicaciones y propuestas anteriores o contempor&aacute;neas, ya sea oral o escrita, entre tu y nosotros (incluyendo, pero no limitado a, cualquier versi&oacute;n previa de los T&eacute;rminos de Servicio).</p>
+            <p>Cualquier ambig&uuml;edad en la interpretaci&oacute;n de estas Condiciones del servicio no se interpretar&aacute;n en contra del grupo de redacci&oacute;n.</p>
+            <p><br />SECCI&Oacute;N 18 - LEY</p>
+            <p>Estas Condiciones del servicio y cualquier acuerdos aparte en el que te proporcionemos servicios se regir&aacute;n e interpretar&aacute;n en conformidad con las leyes de Quesada, Quesada, A, 21001, Costa Rica.</p>
+            <p><br />SECCI&Oacute;N 19 - CAMBIOS EN LOS T&Eacute;RMINOS DE SERVICIO</p>
+            <p>Puedes revisar la versi&oacute;n m&aacute;s actualizada de los T&eacute;rminos de Servicio en cualquier momento en esta p&aacute;gina.</p>
+            <p>Nos reservamos el derecho, a nuestra sola discreci&oacute;n, de actualizar, modificar o reemplazar cualquier parte de estas Condiciones del servicio mediante la publicaci&oacute;n de las actualizaciones y los cambios en nuestro sitio web. Es tu responsabilidad revisar nuestro sitio web peri&oacute;dicamente para verificar los cambios. El uso cont&iacute;nuo de o el acceso a nuestro sitio Web o el Servicio despu&eacute;s de la publicaci&oacute;n de cualquier cambio en estas Condiciones de servicio implica la aceptaci&oacute;n de dichos cambios.</p>
+            <p><br />SECCI&Oacute;N 20 - INFORMACI&Oacute;N DE CONTACTO</p>
+            <p>Preguntas acerca de los T&eacute;rminos de Servicio deben ser enviadas a developer.diegopiedra@gmail.com.</p>
+          </div>
+        </p>
+      </div>
+    </modal>
+    <modal :open="modals.law" @close="modals.law = false" class="hide">
+      <div class="card secondary m-b text-grey">
+        <p class="modal__text">
+          <div>
+            <h1>Aviso legal y t&eacute;rminos de uso</h1>
+          </div>
+          <div class="">
+            <div class="">
+              <h3>T&eacute;rminos y condiciones del uso mediante este aviso</h3>
+              <p class="ng-binding">Diego Piedra Araya informa a los usuarios de la p&aacute;gina web de su pol&iacute;tica de protecci&oacute;n de datos de car&aacute;cter personal. La utilizaci&oacute;n del espacio web de Diego Piedra Araya y de cualquiera de los servicios que se incorporan presupone la plena aceptaci&oacute;n de las condiciones que se manifiestan en la pol&iacute;tica de privacidad que se expone.</p>
+              <h3>Recogida de datos</h3>
+              <p class="ng-binding">Dando cumplimiento a la Ley 15/1999, de 13 de diciembre, de protecci&oacute;n de datos de car&aacute;cter personal, se informa que los datos de car&aacute;cter personal que se solicitan en nuestros formularios se incluir&aacute;n en un fichero de datos personales el responsable y titular del cual es Diego Piedra Araya. As&iacute; mismo, cuando una persona rellena cualquiera de los formularios con los datos personales que se solicitan y acepta el env&iacute;o, autoriza expresamente a Diego Piedra Araya a tratar o incorporar en el fichero automatizado de su propiedad los datos personales facilitados en el formulario mencionado y todos los datos que se generen en relaci&oacute;n con su participaci&oacute;n o uso de los diferentes eventos que se ofrecen en esta p&aacute;gina web.</p>
+              <p class="ng-binding">Salvo que espec&iacute;ficamente se establezca lo contrario, se considerar&aacute; necesario rellenar todos los campos de cada formulario, para ello el usuario deber&aacute; rellenar los formularios con datos verdaderos, exactos, completos y actualizados. El usuario ser&aacute; el &uacute;nico responsable de cualquier da&ntilde;o o perjuicio, directo y indirecto, que ocasione a Diego Piedra Araya o a cualquier tercero por rellenar los formularios con datos falsos, inexactos, incompletos o no actualizados o con datos de terceros. A trav&eacute;s de las diferentes &aacute;reas que forman parte de este espacio web, los usuarios pueden obtener informaci&oacute;n, realizar consultas y participar los diferentes eventos que Diego Piedra Araya ofrezca mediante su espacio web.</p>
+              <h3>Finalidades del tratamiento</h3>
+              <p>Los datos facilitados nunca ser&aacute;n utilizados con una finalidad diferente de aquella para la cual han sido cedidos, y ser&aacute;n cancelados inmediatamente despu&eacute;s de dejar de ser necesarios para esta finalidad, excepto cuando una ley establezca otra cosa.</p>
+              <p class="ng-binding">Cuando la persona interesada env&iacute;a los datos personales y la direcci&oacute;n electr&oacute;nica a Diego Piedra Araya, autoriza expresamente la utilizaci&oacute;n a efectos de comunicaciones peri&oacute;dicas, incluyendo expresamente las que se realicen por correo electr&oacute;nico que Diego Piedra Araya o las entidades pertenecientes a el &aacute;mbito empresarial de Diego Piedra Araya lleven a t&eacute;rmino con los usuarios, y posibles interesados, para informarles de las noticias, eventos, etc...</p>
+              <p class="ng-binding">Al margen de lo que se ha dicho anteriormente, la recogida y el tratamiento automatizado de los datos personales facilitados tienen igualmente como finalidad la gesti&oacute;n administrativa y la ejecuci&oacute;n y el desarrollo de toda actividad profesional propia de Diego Piedra Arayay la gesti&oacute;n del usuario en los diferentes servicios puestos a su disposici&oacute;n (a efectos meramente informativos: solicitud de informaci&oacute;n sobre eventos).</p>
+              <h3>Seguridad</h3>
+              <p class="ng-binding">Toda la informaci&oacute;n relativa a datos de car&aacute;cter personal recibida por Diego Piedra Araya es tratada con la m&aacute;xima confidencialidad, y se procede &uacute;nicamente a las comunicaciones estrictamente necesarias para la prestaci&oacute;n del servicio que interesa en cada caso y las comunicaciones y cesiones autorizadas por el usuario mediante esta pol&iacute;tica de privacidad.</p>
+              <p class="ng-binding">Diego Piedra Arayaha adoptado los niveles de seguridad de protecci&oacute;n de datos personales requeridos legalmente y ha instalado los medios y medidas t&eacute;cnicas a su alcance para evitar la p&eacute;rdida, el mal uso, la alteraci&oacute;n de los datos personales facilitados y el acceso no autorizado a estos datos.</p>
+              <p class="ng-binding">El usuario tiene derecho a acceder a la informaci&oacute;n que le concierne recopilada en los ficheros de Diego Piedra Araya, rectificarla si es err&oacute;nea, cancelarla o oponerse a su tratamiento, por la v&iacute;a del correo electr&oacute;nico a la direcci&oacute;n&nbsp;<a class="ng-binding" href="mailto:developer.diegopiedra@gmail.com">developer.diegopiedra@gmail.com</a>.</p>
+              <h3>Cesi&oacute;n de datos</h3>
+              <p class="ng-binding">El usuario acepta que sus datos puedan ser cedidos, exclusivamente para las finalidades descritas anteriormente, a las entidades con las que participa Diego Piedra Araya. La aceptaci&oacute;n del usuario que sus datos puedan ser tratados o cedidos de la manera establecida en este par&aacute;grafo tiene siempre el car&aacute;cter de revocable, sin efectos retroactivos, de acuerdo con lo que disponen los art&iacute;culos 6 y 11 de la Ley org&aacute;nica 15/1999, de 13 de diciembre.</p>
+              <h3>Modificaci&oacute;n de esta pol&iacute;tica de privacidad</h3>
+              <p class="ng-binding">Diego Piedra Araya se reserva el derecho de modificar su pol&iacute;tica de protecci&oacute;n de datos de acuerdo con su criterio, o a causa de un cambio legislativo, jurisprudencial o en la pr&aacute;ctica empresarial. Si Diego Piedra Araya, introduce alguna modificaci&oacute;n, el nuevo texto ser&aacute; publicado en esta misma p&aacute;gina, donde el usuario podr&aacute; tener conocimiento de la pol&iacute;tica de protecci&oacute;n de datos. Sea como sea, la relaci&oacute;n con los usuarios se regir&aacute; por las normas previstas en el momento preciso en que se accede al espacio web.</p>
+            </div>
+          </div>
+        </p>
+      </div>
+    </modal>
+    <modal :open="modals.link" @close="modals.link = false" class="hide">
+      <div class="card primary text-white m-b row">
+        <div class="col xs-24">
+          <h1 class="modal__title"><i class="fa fa-link"></i> Creando link</h1>
+        </div>
+        <div class="card secondary text-grey col xs-24">
+          <p class="modal__text m-b" v-if="newLink == ''">
+            Creando link ...
+          </p>
+          <p class="modal__text m-b" v-else>
+            El link para este horario es
+            <br>
+            <input v-model="newLink" disabled class="form__input dark-theme__text-grey">
+          </p>
+        </div>
+      </div>
+    </modal>
+    <modal :open="modals.gifts" @close="modals.gifts = false" class="hide">
+      <div class="card primary text-white m-b row">
+        <div class="col xs-24">
+          <h1 class="modal__title">¿Cómo obtener regalos?</h1>
+          <p style="line-height: 1.5em;font-family: Lora, serif;font-size: 1.1em;">
+            Obtener regalos del generador de horarios es muy sencillo, solo tienes que seguir el prefil de facebook de nuestra diseñadora gráfica <a href="https://fb.com/yuliavilaart" class="text-primary-f dark-theme__text-white bg-secondary" style="padding:3px;font-weight: bold;font-family: 'Open Sans',sans-serif;" target="_blank">fb.com/yuliavilaart</a> quien comparte códigos para obtener EasterEgss y funcionalidades exclusivas, algunas por tiempo limitado o incluso reservadas solo para unos cuantos usuarios.
+          </p>
+          <a href="https://fb.com/yuliavilaart" target="_blank" class="btn mb mt"><i class="fa fa-gift"></i> Vamos a buscar regalos YA</a>
+        </div>
+      </div>
+    </modal>
+    <div class="show-grid" v-if="showGrid">
+      Grid:
+    </div>
+    <header class="row-s header primary">
+      <div class="col xs-24">
+        <h1 class="header__title">Generador de horarios</h1>
+      </div>
+    </header>
+    <div class="sticky">
+      <nav class="row-s nav deep-2 secondary">
+        <div class="col xs-24 show-max-md primary">
+          <button class="nav__btn text-center" id="menu-toggle">
+            <i class="fa fa-bars" aria-hidden="true"></i> Menu
+          </button>
+        </div>
+        <ul class="col xs-24 nav__list primary" id="menu">
+          <li class="nav__item">
+            <button class="nav__btn" @click="createNewSchedule()">
+              <i class="fa fa-table" aria-hidden="true"></i> Crear nuevo horario
+            </button>
+          </li>
+          <li class="nav__item">
+            <button class="nav__btn">
+              <i class="fa fa-save" aria-hidden="true"></i> Guardar como ... <i class="fa fa-indicator fa-chevron-down"></i>
+            </button>
+            <div class="nav__submenu deep-2">
+              <ul>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="saveAsLink()" disabled>
+                    <i class="fa fa-link"></i>Link
+                  </button>
+                </li>
+                <li class="nav__item" v-if="yul">
+                  <button class="nav__btn" @click="downloadImage()">
+                    <i class="fa fa-picture-o"></i> Imagen
+                  </button>
+                </li>
+                <li class="nav__item" v-if="yul">
+                  <button class="nav__btn" @click="downloadPDF()">
+                    <i class="fa fa-file-pdf-o"></i> PDF
+                  </button>
+                </li>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="creatSpreadsheet('ods', 'horarios.ods')">
+                    <i class="fa fa-file-text-o"></i> Hoja de cálculo (ODS)
+                  </button>
+                </li>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="creatSpreadsheet('xlsx', 'horarios.xlsx')">
+                    <i class="fa fa-file-text-o"></i> Hoja de cálculo (XLSX)
+                  </button>
+                </li>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="print()">
+                    <i class="fa fa-print"></i> Imprimir
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav__item">
+            <button class="nav__btn">
+              <i class="fa fa-info-circle"></i> Información<i class="fa fa-indicator fa-chevron-down"></i>
+            </button>
+            <div class="nav__submenu deep-2">
+              <ul>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="modals.colab = true">
+                    <i class="fa fa-users"></i>Acerca de colaboradores
+                  </button>
+                </li>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="modals.dev = true">
+                    <i class="fa fa-code"></i>Librerías de desarrollo
+                  </button>
+                </li>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="modals.terms = true">
+                    <i class="fa fa-file"></i>Términos y condiciones de uso
+                  </button>
+                </li>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="modals.law = true">
+                    <i class="fa fa-gavel"></i>Política de privacidad
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav__item">
+            <button class="nav__btn">
+              <i class="fa fa-question-circle"></i> Ayuda<i class="fa fa-indicator fa-chevron-down"></i>
+            </button>
+            <div class="nav__submenu deep-2">
+              <ul>
+                <li class="nav__item">
+                  <button class="nav__btn" @click="modals.help = true">
+                    <i class="fa fa-save"></i>Acerca de generar y guardar
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <!-- <li class="nav__item">
+            <button class="nav__btn">
+              <i class="fa fa-hand-peace-o"></i> ¿Nos ayudas?
+            </button>
+          </li> -->
+          <li class="nav__item">
+            <button class="nav__btn text-cta-f" @click="modals.gifts = true">
+              <i class="fa fa-gift"></i> ¡Regalos GRATIS!
+            </button>
+          </li>
+        </ul>
+        <v-iframe
+          class="show-min-md"
+          src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FGenerador-de-Horarios%2F711418525589252&amp;width&amp;layout=standard&amp;action=like&amp;show_faces=false&amp;share=true&amp;height=35&amp;appId=246974068650566"
+          scrolling="no"
+          frameborder="0"
+          style="overflow: hidden;position: absolute;right: 0px;padding: 12px;height: 51px;"
+          allowTransparency="true"></v-iframe>
+      </nav>
+      <div class="row-s z-index">
+        <input type="checkbox" class="hide-show__input" id="toogle">
+        <div class="row-s col posible-hiden">
+          <div
+            style="display: none"
+            :style="'display: auto'"
+            :class="{'lg-20 init-lg-3 xl-18 init-xl-4':colorEditor, 'lg-16 init-lg-5 xl-14 init-xl-6': !colorEditor}"
+            class="
+            col
+            xs-22 init-xs-2
+            md-22 init-md-2
+            panel
+            primary
+            deep-2"
+            >
+            <div class="row-m">
+              <div class="col" :class="{'sm-5':colorEditor, 'sm-6':!colorEditor}">
+                <label class="form__label" for="course">Nombre del curso:</label>
+                <input type="text" id="course" class="form__input dark-theme__text-dark" v-model="name" list="cursos">
+                <datalist id="cursos">
+                  <option :value="course" v-for="course in datalistCoursesName"></option>
+                </datalist>
+              </div>
+              <div class="col" :class="{'sm-8':colorEditor, 'sm-9':!colorEditor}">
+                <label class="form__label">Días:</label>
+                <div class="form__input__container custom">
+                  <input type="checkbox" class="form__checkbox" id="l" v-model="days.l">
+                  <label class="form__label" for="l">L</label>
+                </div>
+                <div class="form__input__container custom">
+                  <input type="checkbox" class="form__checkbox" id="k" v-model="days.k">
+                  <label class="form__label" for="k">K</label>
+                </div>
+                <div class="form__input__container custom">
+                  <input type="checkbox" class="form__checkbox" id="m" v-model="days.m">
+                  <label class="form__label" for="m">M</label>
+                </div>
+                <div class="form__input__container custom">
+                  <input type="checkbox" class="form__checkbox" id="j"  v-model="days.j">
+                  <label class="form__label" for="j">J</label>
+                </div>
+                <div class="form__input__container custom">
+                  <input type="checkbox" class="form__checkbox" id="v"  v-model="days.v">
+                  <label class="form__label" for="v">V</label>
+                </div>
+                <div class="form__input__container custom">
+                  <input type="checkbox" class="form__checkbox" id="s"  v-model="days.s">
+                  <label class="form__label" for="s">S</label>
+                </div>
+                <div class="form__input__container custom">
+                  <input type="checkbox" class="form__checkbox" id="d"  v-model="days.d">
+                  <label class="form__label" for="d">D</label>
+                </div>
+              </div>
+              <div class="col sm-3">
+                <label class="form__label">Desde:</label>
+                <div class="form__select__container">
+                  <select class="form__input form__select dark-theme__text-dark" name="" v-model="init">
+                    <option disabled value="-1" selected>---</option>
+                    <template v-for="(hour, i) in initHours">
+                      <option :value="i">{{hour}}</option>
+                    </template>
+                  </select>
+                </div>
+              </div>
+              <div class="col sm-3">
+                <label class="form__label">Hasta:</label>
+                <div class="form__select__container">
+                  <select class="form__input form__select dark-theme__text-dark" name="" v-model="end">
+                    <option disabled value="-1" selected>---</option>
+                    <template v-for="(hour, i) in endHours">
+                      <option :value="hourToRow(hour)">{{hour}}</option>
+                    </template>
+                  </select>
+                </div>
+              </div>
+              <div class="col" :class="{'sm-2':colorEditor, 'hide':!colorEditor}">
+                <label class="form__label">Color:</label>
+                <color-piker v-model="color"></color-piker>
+              </div>
+              <div class="col sm-3">
+                <button class="btn primary custom btn__100" @click="add()">
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <label for="toogle" class="btn primary col xs-12 init-xs-7 sm-10 init-sm-8 md-6 init-md-10 hide-show z-index">
+          Panel<span class="show-min-md"> de agregar cursos</span>
+        </label>
+      </div>
+    </div>
+    <main class="container m-t" style="overflow-y: auto;">
+      <table class="table primary theme basic" ref="table">
+        <thead>
+          <tr>
+            <th>Horas</th>
+            <th>(L) Lunes</th>
+            <th>(K) Martes</th>
+            <th>(M) Miércoles</th>
+            <th>(J) Jueves</th>
+            <th>(V) Viernes</th>
+            <th>(S) Sábado</th>
+            <th>(D) Domingo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="false" class="table_load">
+            <th>07:00 - 07:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>08:00 - 08:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>09:00 - 09:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>10:00 - 10:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>11:00 - 11:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>12:00 - 12:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>13:00 - 13:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>14:00 - 14:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>15:00 - 15:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>16:00 - 16:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>17:00 - 17:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>18:00 - 18:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>19:00 - 19:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>20:00 - 20:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>21:00 - 21:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr v-if="false" class="table_load">
+            <th>22:00 - 22:50</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <template v-if="true" v-for="i in (config.lastHour - config.firstHour +1)">
+            <tr>
+              <th>
+                {{n(i + config.firstHour -1)}}:00 - {{n(i + config.firstHour -1)}}:50
+              </th>
+              <template v-for="data in table[i-1]" v-if="!style && !lol">
+                <td
+                  :style="[(data.ref && data.ref.color) ? {'--color': data.ref.color} : '']"
+                  @click="removeTime(i-1, (data.day?data.day:''), (data.ref?data.ref:null))"
+                >{{data.text}}</td>
+              </template>
+              <template v-for="(data, j) in table[i-1]" v-if="style || lol">
+                <td
+                  :style="[(randomColors && randomColors[i] && randomColors[i][j])? {'--color': randomColors[i][j]} :'red']"
+                >{{data.text}}</td>
+              </template>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </main>
+    <input type="text" class="form__input form__hide-input dark-theme__text-dark" placeholder="Ejecución de comando" @keyup.enter="executeHideCommand" ref="hideCommand" @blur="hideCommand = ''" v-model="hideCommand">
+    <div class="wrap-style" ref="gangham">
+      <div class="style">
+        <audio ref="audio" prelaod loop>
+            <source src="assets/GANGNAM-STYLE.mp3" type='audio/mpeg; codecs="mp3"'/>
+        </audio>
+      </div>
+    </div>
+    <footer class="footer primary dark-theme__black">
+      © Todos los derechos reservados 2018 - Contacto: <a>developer.diegopiedra@gmail.com</a> <span style="float: right">Generador de horarios v2.0.0</span>
+    </footer>
+    <div class="hide">
+      <div ref="canvasContainer"></div>
+      <a ref="canvasAction"></a>
+    </div>
+  </div>
+  <!-- Templates -->
+  <template id="modal">
+    <div class="modal" :class="classComputed">
+      <div class="modal__overley row-s" @click="close" ref="overley">
+          <div class="modal__container col xs-22 init-xs-2 md-18 init-md-4 lg-12 init-lg-7">
+            <slot/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template id="iframe">
+    <iframe :src="srcAsync"></iframe>
+  </template>
+  <template id="color-piker">
+    <div class="color-piker theme basic">
+      <button class="btn color-piker__trigger" :style="'background:' + value"></button>
+      <ul class="color-piker__list">
+        <li class="color-piker__item" v-for="color in colors">
+          <button class="color-piker__btn" :style="'background:' + color" @click="setColor(color)"></button>
+        </li>
+      </ul>
+    </div>
+  </template>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Lora:400,700" async>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" async>
+  <script type="text/javascript">
+    document.addEventListener('click', e =>{
+      if(e.target.tagName == 'BUTTON')
+        e.target.blur()
+    })
+  </script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script lang="javascript" src="lib/xlsx.full.min.js" async></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js" async></script>
+  <script src="lib/html2canvas.min.js" charset="utf-8" async> </script>
+  <script src="https://www.google.com/jsapi"></script>
+  <script>google.load("jquery", "1")</script>
+  <script>
+    const useGoogle = true;
+
+    if(useGoogle){
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-48333384-1', 'coldideas.com');
+      ga('send', 'pageview');
+    }
+
+  </script>
+  <script src="app.js" charset="utf-8"></script>
+</body>
+</html>

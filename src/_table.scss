@@ -1,0 +1,72 @@
+.table{
+  box-shadow: 0 0 20px rgba(0,0,0,.3);
+  font-size: 0.875em;
+  width: 100%;
+  background-color: var(--ligth-grey);
+  color: white;
+}
+
+.table th{
+  background: var(--color);
+  text-align: center;
+}
+
+.table td, .table th {
+    border: 3px solid var(--secondary);
+    width: 10%;
+    padding: 8px 10px;
+}
+
+.table__toImage td, .table__toImage th{
+  border-width: 1px;
+}
+
+.table td{
+  --color: transparent;
+  background: var(--color);
+  text-align: center;
+  user-select: none;
+  cursor: url(./img/x.png),auto
+}
+
+.table td:empty {
+    cursor: default
+}
+
+.table_load {
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+    background-size: 800px 104px;
+    position: relative;
+}
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: -468px 0
+    }
+    100%{
+        background-position: 468px 0
+    }
+}
+
+
+@media print{
+  .header, .sticky, .footer, .hide, .modal, template{
+    display: none !important;
+  }
+
+  body{
+    background: none;
+  }
+
+  .table{
+    box-shadow: none;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}

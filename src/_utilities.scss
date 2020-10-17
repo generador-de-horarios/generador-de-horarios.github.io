@@ -1,0 +1,92 @@
+*{
+	font-family: 'Open Sans', sans-serif;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html{
+}
+
+body{
+	font-size: 16px;
+	max-width: 100%;
+	overflow-x: hidden;
+  background: var(--ligth-grey);
+	font-family: 'Open Sans', sans-serif;
+}
+
+.sticky{
+  position: sticky;
+  top: 0;
+}
+
+.z-index{
+	z-index: -1;
+	position: relative;
+}
+
+.hide{
+	display: none;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgba(map-get($colors, "grey"), .5);
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(map-get($colors, "grey"), .7);
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(darken(map-get($colors, "grey"), 10%), .7);
+}
+
+
+.m{
+  margin: var(--margin);
+}
+
+.m-t{
+  margin-top: var(--margin);
+}
+
+.m-b{
+  margin-bottom: var(--margin);
+}
+
+.m-l{
+  margin-left: var(--margin);
+}
+
+.m-r{
+  margin-right: var(--margin);
+}
+
+@each $label, $value in $breakpoints {
+  @media screen and (max-width: $value) {
+		.show-min-#{$label}{
+			display: none;
+		}
+	}
+  @media screen and (min-width: $value) {
+		.show-max-#{$label}{
+			display: none;
+		}
+	}
+}
+
+.text-center{
+	text-align: center;
+}
