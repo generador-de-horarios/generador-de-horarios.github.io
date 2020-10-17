@@ -973,5 +973,10 @@ const app = new Vue({
     this.dark = localStorage.dark == 'true'
 
     this.colorEditor = localStorage.colorEditor == 'true'
+    
+    if(this.colorEditor == false){
+      this.hideCommand = 'colored'
+      this.executeHideCommand()
+    }
   }
 })
