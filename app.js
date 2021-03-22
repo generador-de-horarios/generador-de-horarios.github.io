@@ -123,7 +123,8 @@ const app = new Vue({
       courses: [],
       config: {
         firstHour: 7,
-        lastHour: 22
+        lastHour: 22,
+        block: true
       },
       modals:{
         error: false,
@@ -746,7 +747,9 @@ const app = new Vue({
             table[i][col] = {
               text: course.name,
               ref: course,
-              day: time.day
+              day: time.day,
+              init: i == initRow,
+              length: endRow - initRow
             }
           }
         }
