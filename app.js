@@ -124,7 +124,7 @@ const app = new Vue({
       config: {
         firstHour: 7,
         lastHour: 22,
-        block: true
+        block: false
       },
       modals:{
         error: false,
