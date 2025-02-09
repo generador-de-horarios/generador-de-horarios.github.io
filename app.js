@@ -1,3 +1,4 @@
+useGoogle = false
 Vue.component('modal', {
   template: '#modal',
   props: {
